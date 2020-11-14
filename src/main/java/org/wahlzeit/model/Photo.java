@@ -103,6 +103,9 @@ public class Photo extends DataObject {
 	 * 
 	 */
 	protected long creationTime = System.currentTimeMillis();
+
+
+	Location location = new Location();
 	
 	/**
 	 * 
@@ -164,6 +167,9 @@ public class Photo extends DataObject {
 		creationTime = rset.getLong("creation_time");
 
 		maxPhotoSize = PhotoSize.getFromWidthHeight(width, height);
+
+		location.setLocationName(rset.getString("tags"));
+		location.setCoords(rset.getDouble("loc_x"),rset.getDouble("loc_y"),rset.getDouble("loc_z"));
 	}
 	
 	/**
@@ -183,9 +189,38 @@ public class Photo extends DataObject {
 		rset.updateInt("status", status.asInt());
 		rset.updateInt("praise_sum", praiseSum);
 		rset.updateInt("no_votes", noVotes);
-		rset.updateLong("creation_time", creationTime);		
+		rset.updateLong("creation_time", creationTime);	
+		rset.updateString("location_name", location.getLocationName());
+		double[] coords = location.getCoords();
+		rset.updateDouble("loc_x", coords[0]);
+		rset.updateDouble("loc_y", coords[1]);	
+		rset.updateDouble("loc_z", coords[2]);
+		
 	}
 
+	public void setLocationName(String name){
+		location.setLocationName(name);
+	}
+
+	public String getLocationName(){
+		return location.getLocationName();
+	}
+
+	public void setCoords(double x, double y, double z){
+		location.setCoords(x, y, z);
+	}
+
+	public double[] getCoords(){
+		return location.getCoords();
+	}
+
+	public boolean hasSameLocation(Photo other){
+		return location.equals(other.location);
+	}
+
+	public boolean takenCloseTogehter(Photo other){
+		return this.location.isClose(other.location);
+	}
 	/**
 	 * 
 	 */
