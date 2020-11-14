@@ -12,6 +12,7 @@ public class Coordinate {
 
 
     protected Coordinate(){}
+
     protected Coordinate(double x, double y, double z){
         this.x = x;
         this.y = y;
@@ -36,8 +37,7 @@ public class Coordinate {
         return (isX == 0 && isY == 0 && isZ == 0);
     }
 
-    // alternative implementation for isEqual, if you assume that the coordinates only have to be close together
-    protected boolean isNearEnough(Coordinate other){
+    protected boolean isClose(Coordinate other){
         return this.distance(other) < MAX_DIFF;
     }
 

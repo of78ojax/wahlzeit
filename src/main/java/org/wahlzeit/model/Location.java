@@ -6,11 +6,11 @@ public class Location {
 
 
     protected boolean equals(Location other){
-        return coordinate.isEqual(other.coordinate);
+        return coordinate.isEqual(other.coordinate) && this.name == other.name;
     }
 
     protected boolean isClose(Location other){
-        return this.coordinate.isNearEnough(other.coordinate);
+        return this.coordinate.isClose(other.coordinate);
     }
 
     protected String getLocationName(){
