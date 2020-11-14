@@ -21,6 +21,7 @@
 package org.wahlzeit.model;
 
 import java.sql.*;
+import java.util.concurrent.locks.StampedLock;
 import java.net.*;
 
 import org.wahlzeit.services.*;
@@ -105,7 +106,7 @@ public class Photo extends DataObject {
 	protected long creationTime = System.currentTimeMillis();
 
 
-	Location location = new Location();
+	Location location;
 	
 	/**
 	 * 
@@ -167,8 +168,11 @@ public class Photo extends DataObject {
 		creationTime = rset.getLong("creation_time");
 
 		maxPhotoSize = PhotoSize.getFromWidthHeight(width, height);
-
-		location.setLocationName(rset.getString("tags"));
+		if(location == null){
+			location = new Location();
+		}
+		// could add check if location is != "" so if there is not a location do not create one
+		location.setLocationName(rset.getString("location_name"));
 		location.setCoords(rset.getDouble("loc_x"),rset.getDouble("loc_y"),rset.getDouble("loc_z"));
 	}
 	
@@ -190,37 +194,74 @@ public class Photo extends DataObject {
 		rset.updateInt("praise_sum", praiseSum);
 		rset.updateInt("no_votes", noVotes);
 		rset.updateLong("creation_time", creationTime);	
-		rset.updateString("location_name", location.getLocationName());
-		double[] coords = location.getCoords();
-		rset.updateDouble("loc_x", coords[0]);
-		rset.updateDouble("loc_y", coords[1]);	
-		rset.updateDouble("loc_z", coords[2]);
+		if(location != null){
+			rset.updateString("location_name", location.getLocationName());
+			double[] coords = location.getCoords();
+			rset.updateDouble("loc_x", coords[0]);
+			rset.updateDouble("loc_y", coords[1]);	
+			rset.updateDouble("loc_z", coords[2]);
+		}
 		
 	}
 
-	public void setLocationName(String name){
+	public boolean hasLocation(){
+		return (location != null);
+	}
+
+	public void setLocation(Location loc){
+		location = loc;
+	}
+
+	public void setLocation(String name, double x,double y,double z){
+		location = new Location();
 		location.setLocationName(name);
-	}
-
-	public String getLocationName(){
-		return location.getLocationName();
-	}
-
-	public void setCoords(double x, double y, double z){
 		location.setCoords(x, y, z);
 	}
 
+	public void setLocationName(String name){
+		if(location != null)
+			location.setLocationName(name);
+	}
+
+	public String getLocationName(){
+		if(location != null){
+			return location.getLocationName();
+		}
+		else{
+			return "";
+		}
+	}
+
+	public void setCoords(double x, double y, double z){
+		if(location != null)
+			location.setCoords(x, y, z);
+	}
+
 	public double[] getCoords(){
-		return location.getCoords();
+		if(location != null){
+			return location.getCoords();
+		}else{
+			double tmp[] = {-1.,-1.,-1.};
+			return tmp;
+		}
 	}
 
 	public boolean hasSameLocation(Photo other){
-		return location.equals(other.location);
+		if(location != null && other.location != null){
+			return location.equals(other.location);
+		}else{
+			return false;
+		}
 	}
 
 	public boolean takenCloseTogehter(Photo other){
-		return this.location.isClose(other.location);
+		if(location != null && other.location != null){
+			return this.location.isClose(other.location);
+		}else{
+			return false;
+		}
 	}
+
 	/**
 	 * 
 	 */
