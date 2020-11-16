@@ -168,7 +168,7 @@ public class Photo extends DataObject {
 
 		maxPhotoSize = PhotoSize.getFromWidthHeight(width, height);
 		String txt = rset.getString("location_name");
-		if (txt == "") {
+		if (txt != null) {
 			if (location == null) {
 				location = new Location();
 			}
