@@ -173,7 +173,7 @@ public class Photo extends DataObject {
 				location = new Location();
 			}
 			location.setLocationName(txt);
-			location.setCoords(rset.getDouble("loc_x"), rset.getDouble("loc_y"), rset.getDouble("loc_z"));
+			location.coordinate.setCoordinates(rset.getDouble("loc_x"), rset.getDouble("loc_y"), rset.getDouble("loc_z"));
 		}
 	}
 
@@ -197,10 +197,9 @@ public class Photo extends DataObject {
 		rset.updateLong("creation_time", creationTime);
 		if (location != null) {
 			rset.updateString("location_name", location.getLocationName());
-			double[] coords = location.getCoords();
-			rset.updateDouble("loc_x", coords[0]);
-			rset.updateDouble("loc_y", coords[1]);
-			rset.updateDouble("loc_z", coords[2]);
+			rset.updateDouble("loc_x", location.coordinate.getX());
+			rset.updateDouble("loc_y", location.coordinate.getY());
+			rset.updateDouble("loc_z", location.coordinate.getZ());
 		}
 
 	}
@@ -216,7 +215,7 @@ public class Photo extends DataObject {
 	public void setLocation(String name, double x, double y, double z) {
 		location = new Location();
 		location.setLocationName(name);
-		location.setCoords(x, y, z);
+		location.coordinate.setCoordinates(x, y, z);
 	}
 
 	public void setLocationName(String name) {
@@ -229,20 +228,6 @@ public class Photo extends DataObject {
 			return location.getLocationName();
 		} else {
 			return "";
-		}
-	}
-
-	public void setCoords(double x, double y, double z) {
-		if (location != null)
-			location.setCoords(x, y, z);
-	}
-
-	public double[] getCoords() {
-		if (location != null) {
-			return location.getCoords();
-		} else {
-			double tmp[] = { -1., -1., -1. };
-			return tmp;
 		}
 	}
 

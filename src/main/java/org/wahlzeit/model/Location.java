@@ -1,12 +1,25 @@
 package org.wahlzeit.model;
 
+import java.util.Objects;
+
 public class Location {
     private String name = "default";
-    private Coordinate coordinate = new Coordinate();
+    protected Coordinate coordinate = new Coordinate();
 
 
-    protected boolean equals(Location other){
+    @Override
+    public boolean equals(Object o){
+        if (o == this) return true;
+        if (!(o instanceof User)) {
+            return false;
+        }
+       Location other = (Location) o;
         return coordinate.isEqual(other.coordinate) && this.name == other.name;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, coordinate.getX(), coordinate.getY(),coordinate.getZ());
     }
 
     protected boolean isClose(Location other){
@@ -21,11 +34,4 @@ public class Location {
         this.name = name;
     }
 
-    protected double[] getCoords(){
-        return coordinate.getCoords();
-    } 
-
-    protected void setCoords(double x,double y, double z){
-        coordinate.setCoordinates(x, y, z);
-    }
 }

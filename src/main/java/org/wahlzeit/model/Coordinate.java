@@ -25,9 +25,14 @@ public class Coordinate {
         this.z = z;    
     }
 
-    protected double[] getCoords(){
-        double[] tmp = {x,y,z};
-        return tmp;
+    protected double getX(){
+        return x;
+    }
+    protected double getY(){
+        return y;
+    }
+    protected double getZ(){
+        return z;
     }
 
     protected boolean isEqual(Coordinate other){
