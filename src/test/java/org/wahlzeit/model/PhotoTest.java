@@ -1,7 +1,6 @@
 package org.wahlzeit.model;
 
 import org.junit.Test;
-import org.wahlzeit.model.EnvironmentPhoto.Environment;
 
 import java.lang.Double;
 import static org.junit.Assert.assertFalse;
@@ -11,15 +10,15 @@ import static org.junit.Assert.assertTrue;
 public class PhotoTest {
     @Test
     public void testEnvironmentValues() {
-        assertTrue(EnvironmentPhoto.Environment.DEFAULT.equalsName("None"));
-        assertTrue(EnvironmentPhoto.Environment.OCEAN.equalsName("Ocean"));
-        assertTrue(EnvironmentPhoto.Environment.MOUNTAINS.equalsName("Mountains"));
-        assertTrue(EnvironmentPhoto.Environment.FOREST.equalsName("Forest"));
-        assertTrue(EnvironmentPhoto.Environment.BEACH.equalsName("Beach"));
-        assertTrue(EnvironmentPhoto.Environment.URBAN.equalsName("Urban"));
+        assertTrue(Environment.DEFAULT.equalsName("None"));
+        assertTrue(Environment.OCEAN.equalsName("Ocean"));
+        assertTrue(Environment.MOUNTAINS.equalsName("Mountains"));
+        assertTrue(Environment.FOREST.equalsName("Forest"));
+        assertTrue(Environment.BEACH.equalsName("Beach"));
+        assertTrue(Environment.URBAN.equalsName("Urban"));
         
-        assertFalse(EnvironmentPhoto.Environment.URBAN.equalsName("urban"));
-        assertFalse(EnvironmentPhoto.Environment.DEFAULT.equalsName("Ocean"));
+        assertFalse(Environment.URBAN.equalsName("urban"));
+        assertFalse(Environment.DEFAULT.equalsName("Ocean"));
     }
 
     @Test
