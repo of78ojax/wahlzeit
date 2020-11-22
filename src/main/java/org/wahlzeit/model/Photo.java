@@ -212,25 +212,6 @@ public class Photo extends DataObject {
 		location = loc;
 	}
 
-	public void setLocation(String name, double x, double y, double z) {
-		location = new Location();
-		location.setLocationName(name);
-		location.coordinate.setCoordinates(x, y, z);
-	}
-
-	public void setLocationName(String name) {
-		if (location != null)
-			location.setLocationName(name);
-	}
-
-	public String getLocationName() {
-		if (location != null) {
-			return location.getLocationName();
-		} else {
-			return "";
-		}
-	}
-
 	public boolean hasSameLocation(Photo other) {
 		if (location != null && other.location != null) {
 			return location.equals(other.location);

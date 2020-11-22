@@ -33,7 +33,8 @@ CREATE TABLE photos (
 	location_name text,
 	loc_x double precision,
 	loc_y double precision,	
-	loc_z double precision
+	loc_z double precision,
+	environment text
 );
 
 CREATE TABLE tags (

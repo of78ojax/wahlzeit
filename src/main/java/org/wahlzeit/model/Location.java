@@ -3,14 +3,14 @@ package org.wahlzeit.model;
 import java.util.Objects;
 
 public class Location {
-    private String name = "default";
-    protected Coordinate coordinate = new Coordinate();
+    private String name = "None";
+    protected Coordinate coordinate = new Coordinate(-1.0,-1.0,-1.0);
 
 
     @Override
     public boolean equals(Object o){
         if (o == this) return true;
-        if (!(o instanceof User)) {
+        if (!(o instanceof Location)) {
             return false;
         }
        Location other = (Location) o;
