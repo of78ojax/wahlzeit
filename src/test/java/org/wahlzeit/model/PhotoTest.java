@@ -1,11 +1,11 @@
 package org.wahlzeit.model;
 
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Test;
 
 import java.lang.Double;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
 
 public class PhotoTest {
     @Test
@@ -81,5 +81,16 @@ public class PhotoTest {
         EnvironmentPhoto eP2 = new EnvironmentPhoto();
         eP2.environment = Environment.BEACH;
         assertFalse(eP.hasSameEnvironment(eP2));
+
+        PhotoFactory fac = PhotoFactory.getInstance();
+        assertTrue(fac instanceof EnvironmentPhotoFactory);
+        Photo ph = fac.createPhoto();
+        assertTrue(ph instanceof EnvironmentPhoto);
+        ph = fac.createPhoto(PhotoId.getIdFromInt(120));
+        assertTrue(ph instanceof EnvironmentPhoto);
+
+        PhotoManager man = PhotoManager.getInstance();
+        assertTrue(man instanceof EnvironmentPhotoManager);
+
     }
 }
