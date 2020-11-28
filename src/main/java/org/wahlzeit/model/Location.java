@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Location {
     private String name = "None";
-    protected Coordinate coordinate = new Coordinate(-1.0,-1.0,-1.0);
+    protected CartesianCoordinate coordinate = new CartesianCoordinate(-1.0,-1.0,-1.0);
 
 
     @Override
