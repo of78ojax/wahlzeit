@@ -1,4 +1,6 @@
 package org.wahlzeit.model;
+import java.sql.*;
+import java.sql.ResultSet;
 
 import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
 
@@ -64,6 +66,24 @@ public class SphericCoordinate implements Coordinate {
                 Math.sin(lat1) * Math.sin(lat2) + 
                 Math.cos(lat1) * Math.cos(lat2) * Math.cos(Math.abs(long1 - long2))
                 );
+    }
+    @Override
+    public String getType(){
+        return Coordinate.SPHERICAL;
+    }
+    @Override
+    public void readFrom(ResultSet rset) throws SQLException{
+        r = rset.getDouble("loc_x");
+        phi = rset.getDouble("loc_y");
+        theta = rset.getDouble("loc_z");
+
+    }
+    @Override
+    public void writeOn(ResultSet rset) throws SQLException{
+        rset.updateDouble("loc_x",r);
+        rset.updateDouble("loc_y",phi);
+        rset.updateDouble("loc_z",theta);
+        rset.updateString("coord_type",Coordinate.SPHERICAL);
     }
 
     protected double getRadius() {

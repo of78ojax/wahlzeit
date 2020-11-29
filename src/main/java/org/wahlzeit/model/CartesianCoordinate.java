@@ -1,4 +1,5 @@
 package org.wahlzeit.model;
+import java.sql.*;
 
 import java.lang.Double;
 
@@ -75,6 +76,26 @@ public class CartesianCoordinate implements Coordinate {
         int isY = Double.compare(this.y, comp.y);
         int isZ = Double.compare(this.z, comp.z);
         return (isX == 0 && isY == 0 && isZ == 0);
+    }
+
+    @Override
+    public String getType(){
+        return Coordinate.CARTESIAN;
+    }
+
+    @Override
+    public void readFrom(ResultSet rset) throws SQLException{
+        x = rset.getDouble("loc_x");
+        y = rset.getDouble("loc_y");
+        z = rset.getDouble("loc_z");
+
+    }
+    @Override
+    public void writeOn(ResultSet rset) throws SQLException{
+        rset.updateDouble("loc_x",x);
+        rset.updateDouble("loc_y",y);
+        rset.updateDouble("loc_z",z);
+        rset.updateString("coord_type",Coordinate.CARTESIAN);
     }
 
     protected boolean isClose(CartesianCoordinate other) {

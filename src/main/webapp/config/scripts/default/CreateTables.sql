@@ -34,6 +34,7 @@ CREATE TABLE photos (
 	loc_x double precision,
 	loc_y double precision,	
 	loc_z double precision,
+	coord_type text,
 	environment text
 );
 

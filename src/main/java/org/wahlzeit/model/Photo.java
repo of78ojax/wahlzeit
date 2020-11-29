@@ -172,8 +172,7 @@ public class Photo extends DataObject {
 			if (location == null) {
 				location = new Location();
 			}
-			location.setLocationName(txt);
-			location.coordinate.setCoordinates(rset.getDouble("loc_x"), rset.getDouble("loc_y"), rset.getDouble("loc_z"));
+			location.readFrom(rset);
 		}
 	}
 
@@ -196,10 +195,7 @@ public class Photo extends DataObject {
 		rset.updateInt("no_votes", noVotes);
 		rset.updateLong("creation_time", creationTime);
 		if (location != null) {
-			rset.updateString("location_name", location.getLocationName());
-			rset.updateDouble("loc_x", location.coordinate.getX());
-			rset.updateDouble("loc_y", location.coordinate.getY());
-			rset.updateDouble("loc_z", location.coordinate.getZ());
+			location.writeOn(rset);
 		}
 
 	}
