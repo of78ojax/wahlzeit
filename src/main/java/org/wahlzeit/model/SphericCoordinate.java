@@ -1,4 +1,5 @@
 package org.wahlzeit.model;
+
 import java.sql.*;
 import java.sql.ResultSet;
 
@@ -24,7 +25,7 @@ public class SphericCoordinate implements Coordinate {
         double sz = coord.getZ() * coord.getZ();
         r = Math.sqrt(sx + sy + sz);
 
-        phi = Math.atan2(coord.getY(), coord.getX());
+        phi = Math.atan(coord.getY() / coord.getX());
 
         theta = Math.acos(coord.getZ() / r);
     }
@@ -58,32 +59,33 @@ public class SphericCoordinate implements Coordinate {
     @Override
     public double getCentralAngle(Coordinate other) {
         SphericCoordinate comp = other.asSphericCoordinate();
-        double long1 = Math.PI - phi;
-        double lat1 = (Math.PI / 2.) - theta;
-        double long2 = Math.PI - comp.phi;
-        double lat2 = (Math.PI / 2.) - comp.theta;
+        double long1 = phi;
+        double lat1 = theta;
+        double long2 = comp.phi;
+        double lat2 = comp.theta;
         return Math.acos(
-                Math.sin(lat1) * Math.sin(lat2) + 
-                Math.cos(lat1) * Math.cos(lat2) * Math.cos(Math.abs(long1 - long2))
-                );
+                Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(Math.abs(long1 - long2)));
     }
+
     @Override
-    public String getType(){
+    public String getType() {
         return Coordinate.SPHERICAL;
     }
+
     @Override
-    public void readFrom(ResultSet rset) throws SQLException{
+    public void readFrom(ResultSet rset) throws SQLException {
         r = rset.getDouble("loc_x");
         phi = rset.getDouble("loc_y");
         theta = rset.getDouble("loc_z");
 
     }
+
     @Override
-    public void writeOn(ResultSet rset) throws SQLException{
-        rset.updateDouble("loc_x",r);
-        rset.updateDouble("loc_y",phi);
-        rset.updateDouble("loc_z",theta);
-        rset.updateString("coord_type",Coordinate.SPHERICAL);
+    public void writeOn(ResultSet rset) throws SQLException {
+        rset.updateDouble("loc_x", r);
+        rset.updateDouble("loc_y", phi);
+        rset.updateDouble("loc_z", theta);
+        rset.updateString("coord_type", Coordinate.SPHERICAL);
     }
 
     protected double getRadius() {
