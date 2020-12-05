@@ -1,11 +1,6 @@
 package org.wahlzeit.model;
 
-import java.sql.*;
-import java.sql.ResultSet;
-
-import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
-
-public class SphericCoordinate implements Coordinate {
+public class SphericCoordinate extends AbstractCoordinate {
     private double r = 0.0;
     private double phi = 0.0;
     private double theta = 0.0;
@@ -25,9 +20,42 @@ public class SphericCoordinate implements Coordinate {
         double sz = coord.getZ() * coord.getZ();
         r = Math.sqrt(sx + sy + sz);
 
+        if(r == 0.0 || coord.getX() == 0.0)
+            return;
+
         phi = Math.atan(coord.getY() / coord.getX());
 
         theta = Math.acos(coord.getZ() / r);
+    }
+
+    @Override
+    protected void setFirstElement(double value) {
+        r = value;
+    }
+
+    @Override
+    protected void setSecondElement(double value) {
+        phi = value;
+    }
+
+    @Override
+    protected void setThirdElement(double value) {
+        theta = value;
+    }
+
+    @Override
+    protected double getFirstElement() {
+        return r;
+    }
+
+    @Override
+    protected double getSecondElement() {
+        return phi;
+    }
+
+    @Override
+    protected double getThirdElement() {
+        return theta;
     }
 
     @Override
@@ -40,29 +68,17 @@ public class SphericCoordinate implements Coordinate {
         return this;
     }
 
-    @Override
-    public boolean isEqual(Coordinate other) {
-        SphericCoordinate comp = other.asSphericCoordinate();
-        int isR = Double.compare(this.r, comp.r);
-        int isP = Double.compare(this.phi, comp.phi);
-        int isT = Double.compare(this.theta, comp.theta);
-        return (isR == 0 && isP == 0 && isT == 0);
-    }
 
     @Override
-    public double getCartesianDistance(Coordinate other) {
-        CartesianCoordinate me = this.asCartesianCoordinate();
-        CartesianCoordinate comp = other.asCartesianCoordinate();
-        return me.distance(comp);
+    protected AbstractCoordinate convertToSameType(Coordinate other) {
+        return other.asSphericCoordinate();
     }
 
-    @Override
-    public double getCentralAngle(Coordinate other) {
-        SphericCoordinate comp = other.asSphericCoordinate();
+    public double doGetCentralAngle(SphericCoordinate other) {
         double long1 = phi;
         double lat1 = theta;
-        double long2 = comp.phi;
-        double lat2 = comp.theta;
+        double long2 = other.phi;
+        double lat2 = other.theta;
         return Math.acos(
                 Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(Math.abs(long1 - long2)));
     }
@@ -70,22 +86,6 @@ public class SphericCoordinate implements Coordinate {
     @Override
     public String getType() {
         return Coordinate.SPHERICAL;
-    }
-
-    @Override
-    public void readFrom(ResultSet rset) throws SQLException {
-        r = rset.getDouble("loc_x");
-        phi = rset.getDouble("loc_y");
-        theta = rset.getDouble("loc_z");
-
-    }
-
-    @Override
-    public void writeOn(ResultSet rset) throws SQLException {
-        rset.updateDouble("loc_x", r);
-        rset.updateDouble("loc_y", phi);
-        rset.updateDouble("loc_z", theta);
-        rset.updateString("coord_type", Coordinate.SPHERICAL);
     }
 
     protected double getRadius() {
