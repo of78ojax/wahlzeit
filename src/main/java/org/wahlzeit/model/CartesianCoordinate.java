@@ -12,9 +12,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     protected CartesianCoordinate(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        setCoordinates(x, y, z);
     }
 
     protected CartesianCoordinate(SphericCoordinate coord) {
