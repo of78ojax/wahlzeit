@@ -90,7 +90,7 @@ public abstract class AbstractCoordinate implements Coordinate {
             hash = Objects.hash(coord.getX(), coord.getY(), coord.getZ());
             assertClassInvariants();
         } catch (Exception e) {
-            hash = -1;
+            hash = 0;
         }
         return hash;
     }

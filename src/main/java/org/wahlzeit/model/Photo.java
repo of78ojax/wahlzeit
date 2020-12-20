@@ -177,7 +177,7 @@ public class Photo extends DataObject {
 				location.readFrom(rset);
 			}
 		} catch (SQLException e) {
-			// SQL Error 
+			// SQL Error
 			id = null;
 			ownerId = 0;
 			ownerName = "";
@@ -202,29 +202,27 @@ public class Photo extends DataObject {
 	 */
 	public void writeOn(ResultSet rset) throws SQLException {
 		try {
-			
 
-		rset.updateInt("id", id.asInt());
-		rset.updateInt("owner_id", ownerId);
-		rset.updateString("owner_name", ownerName);
-		rset.updateBoolean("owner_notify_about_praise", ownerNotifyAboutPraise);
-		rset.updateString("owner_email_address", ownerEmailAddress.asString());
-		rset.updateInt("owner_language", ownerLanguage.asInt());
-		rset.updateString("owner_home_page", ownerHomePage.toString());
-		rset.updateInt("width", width);
-		rset.updateInt("height", height);
-		rset.updateString("tags", tags.asString());
-		rset.updateInt("status", status.asInt());
-		rset.updateInt("praise_sum", praiseSum);
-		rset.updateInt("no_votes", noVotes);
-		rset.updateLong("creation_time", creationTime);
-		if (location != null) {
-			location.writeOn(rset);
+			rset.updateInt("id", id.asInt());
+			rset.updateInt("owner_id", ownerId);
+			rset.updateString("owner_name", ownerName);
+			rset.updateBoolean("owner_notify_about_praise", ownerNotifyAboutPraise);
+			rset.updateString("owner_email_address", ownerEmailAddress.asString());
+			rset.updateInt("owner_language", ownerLanguage.asInt());
+			rset.updateString("owner_home_page", ownerHomePage.toString());
+			rset.updateInt("width", width);
+			rset.updateInt("height", height);
+			rset.updateString("tags", tags.asString());
+			rset.updateInt("status", status.asInt());
+			rset.updateInt("praise_sum", praiseSum);
+			rset.updateInt("no_votes", noVotes);
+			rset.updateLong("creation_time", creationTime);
+			if (location != null) {
+				location.writeOn(rset);
+			}
+		} catch (SQLException e) {
+			rset.cancelRowUpdates();
 		}
-	} catch (SQLException e) {
-		rset.cancelRowUpdates();
-	}
-		
 
 	}
 
