@@ -129,7 +129,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     @Override
-    protected AbstractCoordinate convertToSameType(Coordinate other) {
+    protected AbstractCoordinate convertToSameType(Coordinate other) throws CoordinateOperationException{
         assertClassInvariants();
 
         AbstractCoordinate obj = other.asCartesianCoordinate();

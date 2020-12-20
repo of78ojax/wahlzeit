@@ -36,9 +36,13 @@ public class EnvironmentPhoto extends Photo {
     }
 
     @Override
-    public void readFrom(ResultSet rset) throws SQLException {
-        super.readFrom(rset);
-		environment = Environment.getEnvironmentFromString(rset.getString("environment"));
+    public void readFrom(ResultSet rset){
+		super.readFrom(rset);
+		try {
+			environment = Environment.getEnvironmentFromString(rset.getString("environment"));
+		} catch (SQLException e) {
+			environment = Environment.DEFAULT;
+		}
 	}
 	
 }

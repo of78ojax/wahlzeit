@@ -1,50 +1,79 @@
 package org.wahlzeit.model;
+
 import java.sql.*;
 
 import java.util.Objects;
 
 public class Location {
     private String name = "None";
-    protected Coordinate coordinate = new CartesianCoordinate(-1.0,-1.0,-1.0);
-
+    protected Coordinate coordinate = new CartesianCoordinate(-1.0, -1.0, -1.0);
 
     @Override
-    public boolean equals(Object o){
-        if (o == this) return true;
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
         if (!(o instanceof Location)) {
             return false;
         }
-       Location other = (Location) o;
-        return coordinate.isEqual(other.coordinate) && this.name == other.name;
+        Location other = (Location) o;
+        boolean result = this.name == other.name;
+        try {
+            result &= coordinate.isEqual(other.coordinate);
+        } catch (CoordinateOperationException e) {
+            return false;
+        }
+        return result;
     }
 
     @Override
     public int hashCode() {
-        CartesianCoordinate coord = coordinate.asCartesianCoordinate();
-        return Objects.hash(name, coord.getX(), coord.getY(),coord.getZ());
+        try {
+            CartesianCoordinate coord = coordinate.asCartesianCoordinate();
+            return Objects.hash(name, coord.getX(), coord.getY(), coord.getZ());
+            
+        } catch (Exception e) {
+            return 0;
+        }
+        
     }
 
-    protected boolean isClose(Location other){
-        CartesianCoordinate coord = coordinate.asCartesianCoordinate();
-        CartesianCoordinate ocoord = other.coordinate.asCartesianCoordinate();
-        return coord.isClose(ocoord);
+    protected boolean isClose(Location other) {
+        try {
+            CartesianCoordinate coord = coordinate.asCartesianCoordinate();
+            CartesianCoordinate ocoord = other.coordinate.asCartesianCoordinate();
+            return coord.isClose(ocoord);
+        } catch (CoordinateOperationException e) {
+            return false;
+        }
+
     }
 
-    protected String getLocationName(){
+    protected String getLocationName() {
         return name;
     }
 
-    protected void setLocationName(String name){
+    protected void setLocationName(String name) {
         this.name = name;
     }
+
     public void readFrom(ResultSet rset) throws SQLException {
-        String txt = rset.getString("location_name");
-        name = txt;
-        String coordType = rset.getString("coord_type");
-        if(coordType == Coordinate.SPHERICAL){
+        String sqlName;
+        String sqlType;
+        
+        try {
+            sqlName = rset.getString("location_name");
+            sqlType = rset.getString("coord_type");
+
+        } catch (SQLException e) {
+            sqlName = "Not-found";
+            sqlType = "Not-found";
+        }
+
+        name = sqlName;
+        if (sqlType == Coordinate.SPHERICAL) {
             coordinate = new SphericCoordinate();
             coordinate.readFrom(rset);
-        }else{
+        } else {
             coordinate = new CartesianCoordinate();
             coordinate.readFrom(rset);
         }

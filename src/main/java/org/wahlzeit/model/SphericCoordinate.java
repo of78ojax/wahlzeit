@@ -13,13 +13,13 @@ public class SphericCoordinate extends AbstractCoordinate {
         assertNotNan(phi);
         assertNotNan(theta);
 
-        this.r = r;
-        this.phi = phi;
-        this.theta = theta;
+        this.r = Math.abs(r);
+        this.phi = phi % (Math.PI /2);
+        this.theta = Math.abs(theta) % (Math.PI);
 
-        assertResultEquals(this.r, r);
-        assertResultEquals(this.phi, phi);
-        assertResultEquals(this.theta, theta);
+        assertResultEquals(this.r,  Math.abs(r));
+        assertResultEquals(this.phi, phi % (Math.PI /2));
+        assertResultEquals(this.theta, Math.abs(theta) % (Math.PI));
         assertClassInvariants();
 
     }
@@ -40,13 +40,31 @@ public class SphericCoordinate extends AbstractCoordinate {
 
         phi = Math.atan(coord.getY() / coord.getX());
 
+        assertBoundaries(phi, -Math.PI / 2, Math.PI / 2);
+
         theta = Math.acos(coord.getZ() / r);
+
+        assertBoundaries(theta, 0, Math.PI);
 
         assertResultEquals( r * Math.sin(theta) * Math.cos(phi), coord.getX() );
         assertResultEquals( r * Math.sin(theta) * Math.sin(phi), coord.getY() );
         assertResultEquals( r * Math.cos(theta), coord.getZ() );
         assertClassInvariants();
 
+
+    }
+
+    @Override
+    protected void assertClassInvariants() throws IllegalStateException {
+        super.assertClassInvariants();
+        try {
+            assertBoundaries(r, 0.0, Double.MAX_VALUE);
+            assertBoundaries(theta, 0, Math.PI);
+            assertBoundaries(phi, -Math.PI / 2, Math.PI / 2);
+        } catch (Exception e) {
+            throw new IllegalStateException("Object is in a invalid state");
+        }
+        
 
     }
 
@@ -116,7 +134,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 
 
     @Override
-    protected AbstractCoordinate convertToSameType(Coordinate other) {
+    protected AbstractCoordinate convertToSameType(Coordinate other) throws CoordinateOperationException{
         assertClassInvariants();
 
         AbstractCoordinate obj = other.asSphericCoordinate();
@@ -136,8 +154,8 @@ public class SphericCoordinate extends AbstractCoordinate {
         double result = Math.acos(
                 Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(Math.abs(long1 - long2)));
 
-
         assertNotNan(result);
+        assertBoundaries(result, 0.0,2*Math.PI);
         assertClassInvariants();
         return result;        
     }

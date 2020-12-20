@@ -144,35 +144,56 @@ public class Photo extends DataObject {
 	/**
 	 * 
 	 */
-	public void readFrom(ResultSet rset) throws SQLException {
-		id = PhotoId.getIdFromInt(rset.getInt("id"));
+	public void readFrom(ResultSet rset) {
+		try {
 
-		ownerId = rset.getInt("owner_id");
-		ownerName = rset.getString("owner_name");
+			id = PhotoId.getIdFromInt(rset.getInt("id"));
 
-		ownerNotifyAboutPraise = rset.getBoolean("owner_notify_about_praise");
-		ownerEmailAddress = EmailAddress.getFromString(rset.getString("owner_email_address"));
-		ownerLanguage = Language.getFromInt(rset.getInt("owner_language"));
-		ownerHomePage = StringUtil.asUrl(rset.getString("owner_home_page"));
+			ownerId = rset.getInt("owner_id");
+			ownerName = rset.getString("owner_name");
 
-		width = rset.getInt("width");
-		height = rset.getInt("height");
+			ownerNotifyAboutPraise = rset.getBoolean("owner_notify_about_praise");
+			ownerEmailAddress = EmailAddress.getFromString(rset.getString("owner_email_address"));
+			ownerLanguage = Language.getFromInt(rset.getInt("owner_language"));
+			ownerHomePage = StringUtil.asUrl(rset.getString("owner_home_page"));
 
-		tags = new Tags(rset.getString("tags"));
+			width = rset.getInt("width");
+			height = rset.getInt("height");
 
-		status = PhotoStatus.getFromInt(rset.getInt("status"));
-		praiseSum = rset.getInt("praise_sum");
-		noVotes = rset.getInt("no_votes");
+			tags = new Tags(rset.getString("tags"));
 
-		creationTime = rset.getLong("creation_time");
+			status = PhotoStatus.getFromInt(rset.getInt("status"));
+			praiseSum = rset.getInt("praise_sum");
+			noVotes = rset.getInt("no_votes");
 
-		maxPhotoSize = PhotoSize.getFromWidthHeight(width, height);
-		String txt = rset.getString("location_name");
-		if (txt != null) {
-			if (location == null) {
-				location = new Location();
+			creationTime = rset.getLong("creation_time");
+
+			maxPhotoSize = PhotoSize.getFromWidthHeight(width, height);
+			String txt = rset.getString("location_name");
+			if (txt != null) {
+				if (location == null) {
+					location = new Location();
+				}
+				location.readFrom(rset);
 			}
-			location.readFrom(rset);
+		} catch (SQLException e) {
+			// SQL Error 
+			id = null;
+			ownerId = 0;
+			ownerName = "";
+			ownerNotifyAboutPraise = false;
+			ownerEmailAddress = EmailAddress.EMPTY;
+			ownerLanguage = Language.ENGLISH;
+			ownerHomePage = StringUtil.asUrl("");
+			width = 0;
+			height = 0;
+			maxPhotoSize = PhotoSize.MEDIUM; // derived
+			tags = Tags.EMPTY_TAGS;
+			status = PhotoStatus.VISIBLE;
+			praiseSum = 10;
+			noVotes = 1;
+			creationTime = System.currentTimeMillis();
+			location = null;
 		}
 	}
 
@@ -180,6 +201,9 @@ public class Photo extends DataObject {
 	 * 
 	 */
 	public void writeOn(ResultSet rset) throws SQLException {
+		try {
+			
+
 		rset.updateInt("id", id.asInt());
 		rset.updateInt("owner_id", ownerId);
 		rset.updateString("owner_name", ownerName);
@@ -197,6 +221,10 @@ public class Photo extends DataObject {
 		if (location != null) {
 			location.writeOn(rset);
 		}
+	} catch (SQLException e) {
+		rset.cancelRowUpdates();
+	}
+		
 
 	}
 
