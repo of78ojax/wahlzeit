@@ -71,11 +71,9 @@ public class Location {
 
         name = sqlName;
         if (sqlType == Coordinate.SPHERICAL) {
-            coordinate = new SphericCoordinate();
-            coordinate.readFrom(rset);
+            coordinate = new SphericCoordinate(rset);
         } else {
-            coordinate = new CartesianCoordinate();
-            coordinate.readFrom(rset);
+            coordinate = new CartesianCoordinate(rset);
         }
 
     }

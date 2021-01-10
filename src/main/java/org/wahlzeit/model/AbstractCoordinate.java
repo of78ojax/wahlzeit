@@ -3,27 +3,7 @@ package org.wahlzeit.model;
 import java.sql.*;
 import java.util.Objects;
 
-import org.apache.log4j.spi.ThrowableInformation;
-
 public abstract class AbstractCoordinate implements Coordinate {
-
-    @Override
-    public void readFrom(ResultSet rset) throws SQLException {
-        assertClassInvariants();
-        assert rset != null;
-
-        double sqlx = rset.getDouble("loc_x");
-        double sqly = rset.getDouble("loc_y");
-        double sqlz = rset.getDouble("loc_z");
-        setFirstElement(sqlx);
-        setSecondElement(sqly);
-        setThirdElement(sqlz);
-
-        assertResultEquals(sqlx, getFirstElement());
-        assertResultEquals(sqly, getSecondElement());
-        assertResultEquals(sqlz, getThirdElement());
-        assertClassInvariants();
-    }
 
     @Override
     public void writeOn(ResultSet rset) throws SQLException {
@@ -86,14 +66,15 @@ public abstract class AbstractCoordinate implements Coordinate {
         int hash;
         try {
             assertClassInvariants();
-            CartesianCoordinate coord = this.asCartesianCoordinate();
-            hash = Objects.hash(coord.getX(), coord.getY(), coord.getZ());
+            hash = getData().hashCode();
             assertClassInvariants();
         } catch (Exception e) {
             hash = 0;
         }
         return hash;
     }
+
+
 
     @Override
     public boolean isEqual(Coordinate other) throws CoordinateOperationException {
@@ -203,6 +184,10 @@ public abstract class AbstractCoordinate implements Coordinate {
 
     }
 
+    protected boolean doIsEqual(AbstractCoordinate other){
+        return this.getData().equals(other.getData());
+    }
+
     protected abstract AbstractCoordinate convertToSameType(Coordinate other)  throws CoordinateOperationException;
 
     protected abstract double getFirstElement();
@@ -211,10 +196,6 @@ public abstract class AbstractCoordinate implements Coordinate {
 
     protected abstract double getThirdElement();
 
-    protected abstract void setFirstElement(double value);
-
-    protected abstract void setSecondElement(double value);
-
-    protected abstract void setThirdElement(double value);
+    protected abstract CoordinateData getData();
 
 }

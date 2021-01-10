@@ -1,67 +1,59 @@
 package org.wahlzeit.model;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-
-public class CartesianCoordinate extends AbstractCoordinate {
-    private double x = 1.0;
-    private double y = 2.0;
-    private double z = 3.0;
-
-    
-
-    protected CartesianCoordinate() {
-    }
+final public class CartesianCoordinate extends AbstractCoordinate {
+    private final CoordinateData data;
 
     protected CartesianCoordinate(double x, double y, double z) {
-        setCoordinates(x, y, z);
-    }
-
-    protected CartesianCoordinate(SphericCoordinate coord) {
-        assertClassInvariants();
-        assertValidCoordinate(coord);
-
-        double r = coord.getRadius();
-        double theta = coord.getTheta();
-        double phi = coord.getPhi();
-
-        this.x = r * Math.sin(theta) * Math.cos(phi);
-        this.y = r * Math.sin(theta) * Math.sin(phi);
-        this.z = r * Math.cos(theta);
-
-        assertResultEquals(Math.sqrt((x*x) + (y*y) + (z*z)), r);
-        if(x != 0.0 && r != 0.0){
-            assertResultEquals(Math.atan(y/x), phi % Math.PI);
-            assertResultEquals(Math.acos(z/r), theta % Math.PI);
-        }
-        assertClassInvariants();
-
-    }
-
-    protected void setCoordinates(double x, double y, double z) {
-        assertClassInvariants();
         assertNotNan(x);
         assertNotNan(y);
         assertNotNan(z);
-
-        this.x = x;
-        this.y = y;
-        this.z = z;
-
-        assertResultEquals(this.x, x);
-        assertResultEquals(this.y, y);
-        assertResultEquals(this.z, z);
+        data = CoordinateData.getCoordinateData(x, y, z);
         assertClassInvariants();
     }
 
+    protected CartesianCoordinate(SphericCoordinate coord) {
+        assertValidCoordinate(coord);
+
+        data = coord.getData();
+
+        assertClassInvariants();
+
+    }
+
+    CartesianCoordinate(ResultSet rset) throws SQLException{
+        assert rset != null;
+
+        double x = rset.getDouble("loc_x");
+        double y = rset.getDouble("loc_y");
+        double z = rset.getDouble("loc_z");
+        
+        data = CoordinateData.getCoordinateData(x, y, z);
+
+        assertClassInvariants();
+    }
+
+    @Override
+    public Coordinate readFrom(ResultSet rset) throws SQLException {
+        return new CartesianCoordinate(rset);
+    }
+
+    @Override
+    protected CoordinateData getData() {
+        return data;
+    }
+
     protected double getX() {
-        return x;
+        return data.getX();
     }
 
     protected double getY() {
-        return y;
+        return data.getY();
     }
 
     protected double getZ() {
-        return z;
+        return data.getZ();
     }
 
     @Override
@@ -76,39 +68,6 @@ public class CartesianCoordinate extends AbstractCoordinate {
     @Override
     protected double getThirdElement() {
         return getZ();
-    }
-
-    @Override
-    protected void setFirstElement(double value) {
-        assertClassInvariants();
-        assertNotNan(value);
-
-        x = value;
-
-        assertResultEquals(x, value);
-        assertClassInvariants();
-    }
-
-    @Override
-    protected void setSecondElement(double value) {
-        assertClassInvariants();
-        assertNotNan(value);
-
-        y = value;
-
-        assertResultEquals(y, value);
-        assertClassInvariants();
-    }
-
-    @Override
-    protected void setThirdElement(double value) {
-        assertClassInvariants();
-        assertNotNan(value);
-
-        z = value;
-
-        assertResultEquals(z, value);
-        assertClassInvariants();
     }
 
     @Override
@@ -144,24 +103,13 @@ public class CartesianCoordinate extends AbstractCoordinate {
         return Coordinate.CARTESIAN;
     }
 
-    protected boolean doIsEqual(CartesianCoordinate other){
-        assertClassInvariants();
-        assertValidCoordinate(other);
-
-        double eps = 0.00001;
-        double isR = Math.abs(this.getFirstElement() - other.getFirstElement());
-        double isP = Math.abs(this.getSecondElement() - other.getSecondElement());
-        double isT = Math.abs(this.getThirdElement() - other.getThirdElement());
-        boolean result = (isR < eps && isP < eps && isT < eps);
-
-        assertClassInvariants();
-        return result;
-    }
-
     protected double getDistance(CartesianCoordinate other) {
         assertClassInvariants();
         assertValidCoordinate(other);
-        double distance = (new CartesianCoordinate(this.x - other.x, this.y - other.y, this.z - other.z)).length();
+        double x = data.getX();
+        double y = data.getY();
+        double z = data.getZ();
+        double distance = (new CartesianCoordinate(x - other.getX(), y - other.getY(), z - other.getZ())).length();
         
         assertNotNan(distance);
         assertClassInvariants();
@@ -170,6 +118,10 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
     private double length() {
         assertClassInvariants();
+        double x = data.getX();
+        double y = data.getY();
+        double z = data.getZ();
+
 
         double xSquare = x * x;
         double ySquare = y * y;

@@ -1,104 +1,79 @@
 package org.wahlzeit.model;
 
-public class SphericCoordinate extends AbstractCoordinate {
-    private double r = 0.0;
-    private double phi = 0.0;
-    private double theta = 0.0;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-    SphericCoordinate() {
-    };
+public final class SphericCoordinate extends AbstractCoordinate {
+    private final CoordinateData data;
 
     SphericCoordinate(double r, double phi, double theta) {
         assertNotNan(r);
         assertNotNan(phi);
         assertNotNan(theta);
 
-        this.r = Math.abs(r);
-        this.phi = phi % (Math.PI /2);
-        this.theta = Math.abs(theta) % (Math.PI);
+        double nr = Math.abs(r);
+        double nphi = phi % (Math.PI / 2);
+        double ntheta = Math.abs(theta) % (Math.PI);
 
-        assertResultEquals(this.r,  Math.abs(r));
-        assertResultEquals(this.phi, phi % (Math.PI /2));
-        assertResultEquals(this.theta, Math.abs(theta) % (Math.PI));
+        double x = nr * Math.sin(ntheta) * Math.cos(nphi);
+        double y = nr * Math.sin(ntheta) * Math.sin(nphi);
+        double z = nr * Math.cos(ntheta);
+
+        data = CoordinateData.getCoordinateData(x, y, z);
+
         assertClassInvariants();
 
     }
 
     SphericCoordinate(CartesianCoordinate coord) {
-        assertClassInvariants();
         assertValidCoordinate(coord);
 
-        double sx = coord.getX() * coord.getX();
-        double sy = coord.getZ() * coord.getY();
-        double sz = coord.getZ() * coord.getZ();
-        r = Math.sqrt(sx + sy + sz);
+        data = coord.getData();
 
-        if(r == 0.0 || coord.getX() == 0.0){
-            assertClassInvariants();
-            return;
-        }
-
-        phi = Math.atan(coord.getY() / coord.getX());
-
-        assertBoundaries(phi, -Math.PI / 2, Math.PI / 2);
-
-        theta = Math.acos(coord.getZ() / r);
-
-        assertBoundaries(theta, 0, Math.PI);
-
-        assertResultEquals( r * Math.sin(theta) * Math.cos(phi), coord.getX() );
-        assertResultEquals( r * Math.sin(theta) * Math.sin(phi), coord.getY() );
-        assertResultEquals( r * Math.cos(theta), coord.getZ() );
         assertClassInvariants();
+    }
 
+    SphericCoordinate(ResultSet rset) throws SQLException {
+        assert rset != null;
 
+        double sqlx = rset.getDouble("loc_x");
+        double sqly = rset.getDouble("loc_y");
+        double sqlz = rset.getDouble("loc_z");
+
+        double nr = Math.abs(sqlx);
+        double nphi = sqly % (Math.PI / 2);
+        double ntheta = Math.abs(sqlz) % (Math.PI);
+
+        double x = nr * Math.sin(ntheta) * Math.cos(nphi);
+        double y = nr * Math.sin(ntheta) * Math.sin(nphi);
+        double z = nr * Math.cos(ntheta);
+
+        data = CoordinateData.getCoordinateData(x, y, z);
+
+        assertClassInvariants();
+    }
+
+    @Override
+    public Coordinate readFrom(ResultSet rset) throws SQLException {
+        return new SphericCoordinate(rset);
     }
 
     @Override
     protected void assertClassInvariants() throws IllegalStateException {
         super.assertClassInvariants();
         try {
-            assertBoundaries(r, 0.0, Double.MAX_VALUE);
-            assertBoundaries(theta, 0, Math.PI);
-            assertBoundaries(phi, -Math.PI / 2, Math.PI / 2);
+            assertBoundaries(getRadius(), 0.0, Double.MAX_VALUE);
+            assertBoundaries(getTheta(), 0, Math.PI);
+            assertBoundaries(getPhi(), -Math.PI / 2, Math.PI / 2);
         } catch (Exception e) {
             throw new IllegalStateException("Object is in a invalid state");
         }
-        
 
     }
 
     @Override
-    protected void setFirstElement(double value) {
-        assertClassInvariants();
-        assertNotNan(value);
-
-        r = value;
-
-        assertResultEquals(r, value);
-        assertClassInvariants();
-    }
-
-    @Override
-    protected void setSecondElement(double value) {
-        assertClassInvariants();
-        assertNotNan(value);
-
-        phi = value;
-
-        assertResultEquals(phi, value);
-        assertClassInvariants();
-    }
-
-    @Override
-    protected void setThirdElement(double value) {
-        assertClassInvariants();
-        assertNotNan(value);
-
-        theta = value;
-
-        assertResultEquals(theta, value);
-        assertClassInvariants();
+    protected CoordinateData getData() {
+        return data;
     }
 
     @Override
@@ -132,9 +107,8 @@ public class SphericCoordinate extends AbstractCoordinate {
         return this;
     }
 
-
     @Override
-    protected AbstractCoordinate convertToSameType(Coordinate other) throws CoordinateOperationException{
+    protected AbstractCoordinate convertToSameType(Coordinate other) throws CoordinateOperationException {
         assertClassInvariants();
 
         AbstractCoordinate obj = other.asSphericCoordinate();
@@ -147,17 +121,17 @@ public class SphericCoordinate extends AbstractCoordinate {
     public double doGetCentralAngle(SphericCoordinate other) {
         assertClassInvariants();
         assertValidCoordinate(other);
-        double long1 = phi;
-        double lat1 = theta;
-        double long2 = other.phi;
-        double lat2 = other.theta;
+        double long1 = getPhi();
+        double lat1 = getTheta();
+        double long2 = other.getPhi();
+        double lat2 = other.getTheta();
         double result = Math.acos(
                 Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(Math.abs(long1 - long2)));
 
         assertNotNan(result);
-        assertBoundaries(result, 0.0,2*Math.PI);
+        assertBoundaries(result, 0.0, 2 * Math.PI);
         assertClassInvariants();
-        return result;        
+        return result;
     }
 
     @Override
@@ -166,15 +140,29 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     protected double getRadius() {
-        return Math.abs(r);
+        double x = data.getX();
+        double y = data.getY();
+        double z = data.getZ();
+
+        double r = Math.sqrt(x + y + z);
+        return r;
     }
 
     protected double getPhi() {
-        return phi;
+        double x = data.getX();
+        double y = data.getY();
+        if (x == 0.)
+            return 0.0;
+
+        return Math.atan(y / x);
     }
 
     protected double getTheta() {
-        return theta;
+        double z = data.getZ();
+        double r = getRadius();
+        if (r == 0.)
+            return 0.;
+        return Math.acos(z / r);
     }
 
 }
