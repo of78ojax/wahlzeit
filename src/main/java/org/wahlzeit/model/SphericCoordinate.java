@@ -3,6 +3,11 @@ package org.wahlzeit.model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
+@PatternInstance(
+    patternName =  "Adapter",
+    participants = {"SphericalCoordinate", "CartesianCoordinate", "CoordinateData"}
+)
 public final class SphericCoordinate extends AbstractCoordinate {
     private final CoordinateData data;
 

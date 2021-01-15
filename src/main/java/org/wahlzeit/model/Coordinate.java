@@ -1,6 +1,11 @@
 package org.wahlzeit.model;
 import java.sql.*;
 
+
+@PatternInstance(
+    patternName = "Bridge",
+    participants = {"Coordinate", "AbstractCoordinate", "SphericCoordinate", "CarthesianCoordinate"}
+)
 public interface Coordinate {
 
    

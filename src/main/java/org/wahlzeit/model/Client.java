@@ -26,6 +26,10 @@ import org.wahlzeit.services.*;
  * A Client uses the system. It is an abstract superclass. This package defines guest, user, moderator, and
  * administrator clients.
  */
+@PatternInstance(
+	patternName = "Decorator",
+	participants = {"Client","Guest", "Moderator", "Administrator", "User"}
+)
 public abstract class Client {
 	
 	/**
