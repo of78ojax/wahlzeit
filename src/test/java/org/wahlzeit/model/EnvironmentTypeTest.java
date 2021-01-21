@@ -51,6 +51,16 @@ public class EnvironmentTypeTest {
 
 
 
+        EnvironmentType seven = EnvironmentType.getEnvironmentType("quattro");
+        seven.setSuperType(four);
+
+        Iterator<EnvironmentType> iter2 = four.getSubTypeIterator();
+        EnvironmentType eight = iter2.next();
+        assertTrue("subtype should be due or tre", seven == eight);
+
+
+
+
     }
     
 }

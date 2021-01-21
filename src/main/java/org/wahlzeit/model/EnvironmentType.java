@@ -64,7 +64,14 @@ public class EnvironmentType {
     }
 
     public void setSuperType(EnvironmentType eType) {
+        doSetSuperType(eType);
+        eType.doAddSubType(this);
+    }
+    private void doSetSuperType(EnvironmentType eType) {
         superType = eType;
+    }
+    private void doAddSubType(EnvironmentType eType){
+        subTypes.add(eType);
     }
 
     public Iterator<EnvironmentType> getSubTypeIterator() {
@@ -73,7 +80,7 @@ public class EnvironmentType {
 
     public void addSubType(EnvironmentType eType) {
         assert (eType != null);
-        eType.setSuperType(this);
-        subTypes.add(eType);
+        eType.doSetSuperType(this);
+        doAddSubType(eType);
     }
 }
