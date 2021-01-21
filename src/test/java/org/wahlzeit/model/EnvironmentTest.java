@@ -3,21 +3,22 @@ package org.wahlzeit.model;
 import org.junit.Test;
 
 import java.lang.Double;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 
 public class EnvironmentTest {
     @Test
     public void testValues() {
-        assertTrue(Environment.DEFAULT.equalsName("None"));
-        assertTrue(Environment.OCEAN.equalsName("Ocean"));
-        assertTrue(Environment.MOUNTAINS.equalsName("Mountains"));
-        assertTrue(Environment.FOREST.equalsName("Forest"));
-        assertTrue(Environment.BEACH.equalsName("Beach"));
-        assertTrue(Environment.URBAN.equalsName("Urban"));
-        
-        assertFalse(Environment.URBAN.equalsName("urban"));
-        assertFalse(Environment.DEFAULT.equalsName("Ocean"));
+        EnvironmentType tmp = EnvironmentType.getEnvironmentType("test");
+        Environment one = new Environment(tmp);
+        Environment two = new Environment(tmp);
+
+        assertNotEquals("Every created Environment should have distinct ID", one.getId(),two.getId());
+        assertTrue("Environments should have the same type", one.haveSameType(two));
+
     }
 }

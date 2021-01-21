@@ -4,10 +4,10 @@ import java.sql.*;
 
 public class EnvironmentPhoto extends Photo {
 
-	protected Environment environment = Environment.DEFAULT;
+	protected Environment environment = null;
 
 	public boolean hasSameEnvironment(EnvironmentPhoto other) {
-		return environment == other.environment;
+		return environment.equals(other.environment);
 	}
 
 	public EnvironmentPhoto() {
@@ -35,7 +35,7 @@ public class EnvironmentPhoto extends Photo {
 		super.writeOn(rset);
 		try {
 
-			rset.updateString("environment", environment.toString());
+			rset.updateString("environment", environment.getName());
 		} catch (SQLException e) {
 			rset.cancelRowUpdates();
 		}
@@ -45,9 +45,9 @@ public class EnvironmentPhoto extends Photo {
 	public void readFrom(ResultSet rset) {
 		super.readFrom(rset);
 		try {
-			environment = Environment.getEnvironmentFromString(rset.getString("environment"));
+			environment = EnvironmentManager.createEnvironment(rset.getString("environment"));
 		} catch (SQLException e) {
-			environment = Environment.DEFAULT;
+			
 		}
 	}
 

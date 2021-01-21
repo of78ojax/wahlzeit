@@ -1,47 +1,30 @@
 package org.wahlzeit.model;
 
-public enum Environment {
+public class Environment {
+    static private int IDcounter = 0;
+    private int id;
+    private EnvironmentType type = null;
 
-    DEFAULT("None"),
-    URBAN("Urban"),
-    MOUNTAINS("Mountains"),
-    FOREST("Forest"),
-    BEACH("Beach"),
-    OCEAN("Ocean");
 
-    private final String name;       
-
-    private Environment(String s) {
-        name = s;
+    public Environment(EnvironmentType type){
+        id = IDcounter++;
+        this.type = type;
     }
 
-
-    public boolean equalsName(String otherName) {
-        // (otherName == null) check is not needed because name.equals(null) returns false 
-        return name.equals(otherName);
+    public EnvironmentType getType(){
+        return type;
     }
 
-    public String toString() {
-       return this.name;
+    public int getId(){
+        return id;
     }
 
-    static Environment getEnvironmentFromString(String eString){
-        switch (eString) {
-            case "None":
-                 return DEFAULT;
-            case "Urban":
-                 return URBAN;
-            case "Mountains":
-                 return MOUNTAINS;
-            case "Forest":
-                 return FOREST;
-            case "Beach":
-                 return BEACH;
-            case "Ocean":
-                return OCEAN;
-            default:
-                return DEFAULT;
-        }
+    public String getName(){
+        return type.getName();
+    }
+
+    public boolean haveSameType(Environment other){
+        return this.type.equals(other.type);
     }
 
 }

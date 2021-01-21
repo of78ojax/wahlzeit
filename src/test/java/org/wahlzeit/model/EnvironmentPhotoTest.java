@@ -10,11 +10,10 @@ public class EnvironmentPhotoTest {
     @Test
     public void testEnvironmentDefaults(){
         EnvironmentPhoto eP = new EnvironmentPhoto();
-        assertTrue("Default environemt should be None", eP.environment == Environment.DEFAULT);
-        assertTrue(eP.hasSameEnvironment(eP));
+        assertTrue("Default environemt should be null", eP.environment == null);
 
         EnvironmentPhoto eP2 = new EnvironmentPhoto();
-        eP2.environment = Environment.BEACH;
+        eP.environment = EnvironmentManager.createEnvironment("Beache");
         assertFalse(eP.hasSameEnvironment(eP2));
 
     }

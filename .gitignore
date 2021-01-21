@@ -10,3 +10,4 @@
 .classpath
 hw/*.pdf
 hw/
+.vscode/spellright.dict
