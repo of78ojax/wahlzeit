@@ -34,7 +34,7 @@ import org.wahlzeit.services.*;
 public class PhotoUtil {
 	
 	/**
-	 * 
+	 *  Helper Function for creating a photo, uses factory to create the photo
 	 */
 	public static Photo createPhoto(File source, PhotoId id) throws Exception {
 		Photo result = PhotoFactory.getInstance().createPhoto(id);

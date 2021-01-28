@@ -135,7 +135,8 @@ public class PhotoManager extends ObjectManager {
 	}
 	
 	/**
-	 * 
+	 * first entry point for creating photo from rset delegating creation to Factory
+	 * Overriden by EnvManager
 	 */
 	protected Photo createObject(ResultSet rset) throws SQLException {
 		return PhotoFactory.getInstance().createPhoto(rset);
@@ -348,7 +349,8 @@ public class PhotoManager extends ObjectManager {
 	}
 		
 	/**
-	 * 
+	 * Second entry point for creating photo from file with helper that is also using the factory
+	 *  Overriden by EnvManager
 	 */
 	public Photo createPhoto(File file) throws Exception {
 		PhotoId id = PhotoId.getNextId();

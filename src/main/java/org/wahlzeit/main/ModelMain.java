@@ -84,7 +84,7 @@ public abstract class ModelMain extends AbstractMain {
 	}
 	
 	/**
-	 * 
+	 * Calls create Mathode of photomanager when creating a user and uses the files of provided directory as basis
 	 */
 	protected void createUser(String userName, String password, String emailAddress, String photoDir) throws Exception {
 		UserManager userManager = UserManager.getInstance();

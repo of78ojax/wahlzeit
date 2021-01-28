@@ -45,6 +45,7 @@ public class EnvironmentPhoto extends Photo {
 	public void readFrom(ResultSet rset) {
 		super.readFrom(rset);
 		try {
+			// Call for Creating an Environment 
 			environment = EnvironmentManager.createEnvironment(rset.getString("environment"));
 		} catch (SQLException e) {
 			

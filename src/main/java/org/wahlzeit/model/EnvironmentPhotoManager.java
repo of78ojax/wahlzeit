@@ -10,11 +10,13 @@ public class EnvironmentPhotoManager extends PhotoManager{
 
     }
 
+    // Overrides but calls super-class Mehtod createObject
     @Override
     public EnvironmentPhoto createPhoto(File file) throws Exception {
 		return (EnvironmentPhoto) super.createPhoto(file);
     }
 
+    // Overrides but calls super-class Mehtod createObject
     @Override
     protected EnvironmentPhoto createObject(ResultSet rset) throws SQLException {
 		return (EnvironmentPhoto) PhotoFactory.getInstance().createPhoto(rset);

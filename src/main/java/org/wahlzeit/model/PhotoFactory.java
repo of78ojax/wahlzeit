@@ -86,20 +86,24 @@ public class PhotoFactory {
 
 	/**
 	 * @methodtype factory
+	 * default factory mehtod creates default Photo
+	 * Overriden by EnvFactory
 	 */
 	public Photo createPhoto() {
 		return new Photo();
 	}
 	
 	/**
-	 * 
+	 *  factory mehtod creates default Photo with specific id
+	 * Overriden by EnvFactory
 	 */
 	public Photo createPhoto(PhotoId id) {
 		return new Photo(id);
 	}
 	
 	/**
-	 * 
+	 * factory mehtod creates photo from resultset
+	 * Overriden by EnvFactory
 	 */
 	public Photo createPhoto(ResultSet rs) throws SQLException {
 		return new Photo(rs);
